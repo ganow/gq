@@ -1,0 +1,4 @@
+0	{'seed': 1, 'mode': 'gauss', 'mean': 15}
+1	{'seed': 2, 'mode': 'logn', 'mean': 15}
+2	{'seed': 3, 'mode': 'gauss', 'mean': 15}
+3	{'seed': 4, 'mode': 'logn', 'mean': 15}
