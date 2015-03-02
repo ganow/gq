@@ -7,8 +7,6 @@ import re
 import json
 import os
 
-__version__ = '0.0.1'
-
 def gq(rootdir, params):
     return Selector(rootdir, params)
 
