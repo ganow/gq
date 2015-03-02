@@ -19,7 +19,7 @@ setup(
     install_requires = open('requirements.txt').read().splitlines(),
     packages=['gq'],
     classifiers = [
-        'Programming Language :: Python :: 2.7.7',
+        'Programming Language :: Python :: 2 :: Only',
         'License :: OSI Approved :: MIT License'
     ]
 )
