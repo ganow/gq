@@ -89,7 +89,7 @@ class Selector(ValMissing):
         return valids
 
     def size(self):
-        v = _valid_params()
+        v = self._valid_params()
         return len(v)
 
     def get(self, onGet=None):
@@ -103,7 +103,7 @@ class Selector(ValMissing):
         #         else:
         #             out.append( self.onGet(open(fname)) )
 
-        valids = _valid_params()
+        valids = self._valid_params()
         pbar = ProgressBar(num_iter=len(valids))
 
         if not onGet:
