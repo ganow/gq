@@ -109,7 +109,7 @@ class Selector(ValMissing):
         if not onGet:
             onGet = self.onGet
         for i, v in enumerate(valids):
-            fname = os.path.join(self.curdir, ('%d-' % p['id']) + os.path.split(self.curdir)[1])
+            fname = os.path.join(self.curdir, ('%d-' % v['id']) + os.path.split(self.curdir)[1])
             out.append( onGet(open(fname)) )
             pbar.update(i)
 
