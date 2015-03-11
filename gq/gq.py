@@ -2,6 +2,7 @@
 
 from missing import ValMissing
 from expr import Node, Expression
+from pbar import ProgressBar
 
 import re
 import json
@@ -103,11 +104,13 @@ class Selector(ValMissing):
         #             out.append( self.onGet(open(fname)) )
 
         valids = _valid_params()
+        pbar = ProgressBar(num_iter=len(valids))
 
         if not onGet:
             onGet = self.onGet
-        for v in valids:
+        for i, v in enumerate(valids):
             fname = os.path.join(self.curdir, ('%d-' % p['id']) + os.path.split(self.curdir)[1])
             out.append( onGet(open(fname)) )
+            pbar.update(i)
 
         return out
