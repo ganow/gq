@@ -22,7 +22,7 @@ class ProgressBar(object):
         return '[' + '#' * progress + ' ' * (L-progress) + ']'
 
     def _percent(self, val):
-        return str( (val+1) * 100.0 / self.iter ) + '%'
+        return '%.1f' % ( (val+1) * 100.0 / self.iter ) + '%'
 
 if __name__ == '__main__':
     import time
