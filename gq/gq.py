@@ -24,6 +24,12 @@ def mtable_to_dict(maf_id_file):
 
     return out
 
+id_pattern = re.compile(r'(?P<id>\d+?)-.+')
+
+def get_id(fname):
+    m = id_pattern.match(fname)
+    return int(m.group('id'))
+
 class Selector(ValMissing):
     def __init__(self, rootdir, params, curdir=None, filter=None, next_is_or=False, onGet=lambda f: f):
         self.rootdir = os.path.abspath(os.path.expanduser(rootdir))
@@ -76,14 +82,32 @@ class Selector(ValMissing):
                         next_is_or=True,
                         onGet=self.onGet)
 
+    def _valid_params(self):
+        ids = [get_id(fname) for fname in os.listdir( self.curdir )]
+        valids = filter(lambda p: (p['id'] in ids) and (self.filter.eval(p)), self.params)
+        return valids
+
+    def size(self):
+        v = _valid_params()
+        return len(v)
+
     def get(self, onGet=None):
         out = []
-        for p in self.params:
+        # for p in self.params:
+        #     fname = os.path.join(self.curdir, ('%d-' % p['id']) + os.path.split(self.curdir)[1])
+        #     print fname
+        #     if os.path.exists(fname) and self.filter.eval(p):
+        #         if onGet:
+        #             out.append( onGet(open(fname)) )
+        #         else:
+        #             out.append( self.onGet(open(fname)) )
+
+        valids = _valid_params()
+
+        if not onGet:
+            onGet = self.onGet
+        for v in valids:
             fname = os.path.join(self.curdir, ('%d-' % p['id']) + os.path.split(self.curdir)[1])
-            print fname
-            if os.path.exists(fname) and self.filter.eval(p):
-                if onGet:
-                    out.append( onGet(open(fname)) )
-                else:
-                    out.append( self.onGet(open(fname)) )
+            out.append( onGet(open(fname)) )
+
         return out
