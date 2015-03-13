@@ -69,6 +69,19 @@ class Expression(Node):
     def __str__(self):
         return '(' + str(self.lhs) + ' ' + str(self.op) + ' ' + str(self.rhs) + ')'
 
+    def get_node_names(self):
+        out = []
+        if isinstance(self.lhs, Expression):
+            out.extend(self.lhs.get_node_names())
+        elif hasattr(self.lhs, 'name') and self.lhs.name:
+            out.append(self.lhs.name)
+
+        if isinstance(self.rhs, Expression):
+            out.extend(self.rhs.get_node_names())
+        elif hasattr(self.rhs, 'name') and self.rhs.name:
+            out.append(self.rhs.name)
+        return out
+
     def eval(self, target):
         if self.op == OP_AND or self.op == OP_OR:
             return opfunc[self.op](self.lhs.eval(target), self.rhs.eval(target))

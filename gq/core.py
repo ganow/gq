@@ -66,19 +66,28 @@ class Selector(ValMissing):
     def where(self, expr):
         if not isinstance(expr, Expression):
             raise TypeError("Expression is required")
-        elif self.filter:
+
+        if self.filter:
+            keys = self.filter.get_node_names()
+        else:
+            keys = []
+        keys.extend(expr.get_node_names())
+
+        params = self._filter_params_with_keys(keys)
+
+        if self.filter:
             if self.next_is_or:
-                return Selector(self.rootdir, self.params,
+                return Selector(self.rootdir, params,
                                 curdir=self.curdir,
                                 filter=self.filter | expr,
                                 onGet=self.onGet)
             else:
-                return Selector(self.rootdir, self.params,
+                return Selector(self.rootdir, params,
                                 curdir=self.curdir,
                                 filter=self.filter & expr,
                                 onGet=self.onGet)
         else:
-            return Selector(self.rootdir, self.params,
+            return Selector(self.rootdir, params,
                             curdir=self.curdir,
                             filter=expr,
                             onGet=self.onGet)
@@ -90,9 +99,31 @@ class Selector(ValMissing):
                         next_is_or=True,
                         onGet=self.onGet)
 
+    def sortby(self, *keys):
+        keys = [k.name for k in keys]
+        params = sorted(self._filter_params_with_keys(keys), key=itemgetter(*keys))
+        return Selector(self.rootdir, params,
+                        curdir=self.curdir,
+                        filter=self.filter,
+                        onGet=self.onGet)
+
+    def _filter_params_with_keys(self, keys):
+        if len(keys) >= 2:
+            params = filter(lambda p:
+                                reduce(lambda k1, k2:
+                                            p.has_key(k1) and p.has_key(k2),
+                                       keys),
+                            self.params)
+        else:
+            params = filter(lambda p: p.has_key(keys[0]), self.params)
+        return params
+
     def _valid_params(self):
         ids = [get_id(fname) for fname in os.listdir( self.curdir )]
-        valids = filter(lambda p: (p['id'] in ids) and (self.filter.eval(p)), self.params)
+        if self.filter:
+            valids = filter(lambda p: (p['id'] in ids) and (self.filter.eval(p)), self.params)
+        else:
+            valids = filter(lambda p: p['id'] in ids, self.params)
         return valids
 
     def size(self):
