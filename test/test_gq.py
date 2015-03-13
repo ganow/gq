@@ -1,4 +1,4 @@
-from gq import Selector, mtable_to_dict
+from gq.core import Selector, mtable_to_dict
 import pytest
 
 class TestUtil(object):
