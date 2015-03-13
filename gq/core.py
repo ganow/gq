@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from missing import ValMissing
-from expr import Node, Expression
-from pbar import ProgressBar
-
 import re
 import json
 import os
+from operator import itemgetter
+
+from missing import ValMissing
+from expr import Node, Expression
+from pbar import ProgressBar
 
 def gq(rootdir, params):
     return Selector(rootdir, params)
@@ -25,11 +26,17 @@ def mtable_to_dict(maf_id_file):
 
     return out
 
+def setup_maf(rootdir):
+    with open(os.path.join(rootdir, '.maf_id_table.tsv'), 'r') as f:
+        p = mtable_to_dict(f)
+    return Selector(rootdir, p)
+
 id_pattern = re.compile(r'(?P<id>\d+?)-.+')
 
 def get_id(fname):
     m = id_pattern.match(fname)
-    return int(m.group('id'))
+    if m:
+        return int(m.group('id'))
 
 class Selector(ValMissing):
     def __init__(self, rootdir, params, curdir=None, filter=None, next_is_or=False, onGet=lambda f: f):
