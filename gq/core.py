@@ -108,14 +108,9 @@ class Selector(ValMissing):
                         onGet=self.onGet)
 
     def _filter_params_with_keys(self, keys):
-        if len(keys) >= 2:
-            params = filter(lambda p:
-                                reduce(lambda k1, k2:
-                                            p.has_key(k1) and p.has_key(k2),
-                                       keys),
-                            self.params)
-        else:
-            params = filter(lambda p: p.has_key(keys[0]), self.params)
+        params = self.params
+        for k in keys:
+            params = filter(lambda p: p.has_key(k), params)
         return params
 
     def _valid_params(self):
